@@ -20,7 +20,7 @@ public class GameOfLife {
     public void show() {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print((matrix[i][j] ? "X" : ".") + " ");
+                System.out.print((matrix[i][j] ? "*" : ".") + " ");
             }
             System.out.print("\n");
         }
@@ -58,6 +58,7 @@ public class GameOfLife {
                 }
                 else{
                     if (n == 3){
+                        //revives
                         setCellAlive(i, j);
                     }
                 }
@@ -65,55 +66,30 @@ public class GameOfLife {
         }
     }
 
-    public int countNeighbours(int i, int j, boolean[][] m) {
-        boolean wallLeft = j == 0;
-        boolean wallRight = j == matrix.length - 1;
-        boolean wallUp = i == 0;
-        boolean wallDown = i == matrix.length - 1;
-
-        int sum = 0;
-
-        // check left
-        if (!wallLeft) {
-            if (m[i][j - 1]) sum++;
-
-            // check top left
-            if (!wallUp) {
-                if (m[i - 1][j - 1]) sum++;
-            }
-
-            // check bottom left
-            if (!wallDown) {
-                if (m[i + 1][j - 1]) sum++;
-            }
-        }
-
-        // check right
-        if (!wallRight){
-            if (m[i][j + 1]) sum++;
-
-            // check top right
-            if (!wallUp){
-                if (m[i - 1][j + 1]) sum++;
-            }
-
-            // check bottom right
-            if (!wallDown){
-                if (m[i + 1][j + 1]) sum++;
+    public int countNeighbours(int i, int j, boolean[][] m){
+        int count = 0;
+        int x = 0;
+        int y = 0;
+        for (int k = i - 1; k <= i + 1; k++){
+            for (int l = j - 1; l <= j + 1; l++){
+                x = k;
+                y = l;
+                if (x == -1) {
+                    x = m.length - 1;
+                }
+                if (y == -1) {
+                    y = m.length - 1;
+                }
+                if (x == m.length) {
+                    x = 0;
+                }
+                if (y == m.length) {
+                    y = 0;
+                }
+                if ((m[x][y]) && !(x == i && y == j)) count++;
             }
         }
-
-        // check top
-        if (!wallUp){
-            if (m[i - 1][j]) sum++;
-        }
-
-        // check down
-        if (!wallDown){
-            if (m[i + 1][j]) sum++;
-        }
-
-        return sum;
+        return count;
     }
 
     public void populateRandom(int n){
@@ -138,5 +114,14 @@ public class GameOfLife {
         }
         setCellDead(middle - 3, middle);
         setCellDead(middle + 2, middle);
+    }
+
+    public void placeGlider(){
+        int middle = matrix.length / 2;
+        for (int j = middle - 1; j <= middle + 1; j++){
+            setCellAlive(middle - 1, j);
+        }
+        setCellAlive(middle, middle - 1);
+        setCellAlive(middle + 1, middle);
     }
 }
